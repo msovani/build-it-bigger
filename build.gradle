@@ -17,3 +17,13 @@ allprojects {
         jcenter()
     }
 }
+
+
+
+task runAllforRubic (dependsOn: [':jokeserver:appengineStop', ':jokeserver:appengineRun',':app:connectedCheck']) {
+
+    tasks.getByPath(':jokeserver:appengineRun').mustRunAfter tasks.getByPath(':jokeserver:appengineStop')
+    tasks.getByPath(':app:connectedCheck').dependsOn ':jokeserver:appengineRun'
+//    tasks.getByPath(':jokeserver:appengineStop').mustRunAfter tasks.getByPath(':app:connectedCheck')
+}
+
