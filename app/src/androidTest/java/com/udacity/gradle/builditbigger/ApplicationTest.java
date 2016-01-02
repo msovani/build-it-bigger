@@ -26,9 +26,6 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
             @Override
             public void dowloadSucceeded(String dataString) {
                 joke = dataString;
-                if (signal != null) {
-                    signal.countDown();
-                }
             }
 
             @Override
@@ -44,7 +41,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
     @UiThreadTest
     public void testDownload() throws InterruptedException
     {
-        signal.await(30, TimeUnit.MINUTES);
+        signal.await(30, TimeUnit.SECONDS);
 
         assertTrue("Valid joke is returned", joke != null);
     }
