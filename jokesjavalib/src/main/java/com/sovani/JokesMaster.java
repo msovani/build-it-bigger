@@ -17,6 +17,7 @@ public class JokesMaster {
             };
 
     public String getJoke () {
+        //pick a random joke from the list and send it back to the caller
         int random = ThreadLocalRandom.current().nextInt(0, jokes.length);
         return jokes[random];
     }
