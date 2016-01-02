@@ -43,8 +43,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        //If we are showing spinner, we can remove it now
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
-        progressBar.setVisibility(View.INVISIBLE);
+        if (progressBar != null) {
+            progressBar.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -71,10 +74,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void tellJoke(View view){
 
+        //Check for network availability first (moot point on localserver)
         if (isOnline()) {
-
                 showJoke();
-
         }else {
             Toast.makeText(this, this.getText(R.string.no_network), Toast.LENGTH_SHORT).show();
         }
@@ -82,9 +84,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void noJoke()
     {
+        //If we are unable to retrieve a joke, we just show a toast
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
-        progressBar.setVisibility(View.INVISIBLE);
-
+        if (progressBar != null) {
+            progressBar.setVisibility(View.INVISIBLE);
+        }
         Toast.makeText(this, this.getText(R.string.failed_to_get_joke), Toast.LENGTH_SHORT).show();
     }
 
@@ -97,13 +101,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showJoke(){
+        //Try to call remote server and retrieve a joke.
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
-        progressBar.setVisibility(View.VISIBLE);
+        if (progressBar != null) {
+            progressBar.setVisibility(View.VISIBLE);
+        }
         JokesRetriever jokesRetriever = new JokesRetriever();
         jokesRetriever.setDownloader(dataDownloader);
         jokesRetriever.execute();
     }
     private void displayJoke(String joke){
+        //If we receive joke show it
         Intent in = new Intent(getApplicationContext(), JokeDisplay.class);
         in.putExtra("Joke", joke);
         this.startActivity(in);

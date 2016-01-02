@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,12 +17,9 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.sovani.jokesandroidlibary.JokeDisplay;
-import com.udacity.gradle.builditbigger.DataDownloader;
-import com.udacity.gradle.builditbigger.R;
-import com.udacity.gradle.builditbigger.JokesRetriever;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
     InterstitialAd mInterstitialAd;
     DataDownloader dataDownloader;
 
@@ -29,6 +27,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //We need to show interstitial ad in free version
         mInterstitialAd = new InterstitialAd(this);
         mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
         dataDownloader = new DataDownloader() {
@@ -57,6 +56,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        //If we are showing spinner, we can remove it now
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         if (progressBar != null) {
             progressBar.setVisibility(View.INVISIBLE);
@@ -86,8 +86,9 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void tellJoke(View view){
-
+        //Check for network availability first (moot point on localserver)
         if (isOnline()) {
+            //If we have interstitial ad, we show it here
             if (mInterstitialAd.isLoaded()) {
                 mInterstitialAd.show();
             } else {
@@ -100,6 +101,7 @@ public class MainActivity extends ActionBarActivity {
 
     public void noJoke()
     {
+        //If we are unable to retrieve a joke, we just show a toast
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
         progressBar.setVisibility(View.INVISIBLE);
 
@@ -115,13 +117,17 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void showJoke(){
+        //Try to call remote server and retrieve a joke.
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress_bar);
-        progressBar.setVisibility(View.VISIBLE);
+        if (progressBar != null) {
+            progressBar.setVisibility(View.VISIBLE);
+        }
         JokesRetriever jokesRetriever = new JokesRetriever();
         jokesRetriever.setDownloader(dataDownloader);
         jokesRetriever.execute();
     }
     private void displayJoke(String joke){
+        //If we receive joke show it
         Intent in = new Intent(getApplicationContext(), JokeDisplay.class);
         in.putExtra("Joke", joke);
         this.startActivity(in);
